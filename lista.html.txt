@@ -1,0 +1,344 @@
+lista.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista 1 al 630</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --have: #dcfce7;
+      --have-border: #22c55e;
+      --nothave: #fee2e2;
+      --nothave-border: #ef4444;
+      --pending: #f3f4f6;
+      --pending-border: #9ca3af;
+      --accent: #2563eb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      border: 1px solid #e5e7eb;
+    }
+
+    .card strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 6px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    input, select, button {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    input, select {
+      background: white;
+    }
+
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    button.secondary {
+      background: #374151;
+    }
+
+    button.danger {
+      background: #dc2626;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+    }
+
+    .item {
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      border: 2px solid var(--pending-border);
+      background: var(--pending);
+      user-select: none;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .item:hover {
+      transform: translateY(-2px);
+    }
+
+    .item .num {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .item .state {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .have {
+      background: var(--have);
+      border-color: var(--have-border);
+    }
+
+    .nothave {
+      background: var(--nothave);
+      border-color: var(--nothave-border);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 14px 0 18px;
+      font-size: 14px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid #999;
+    }
+
+    .dot.have { background: var(--have); border-color: var(--have-border); }
+    .dot.nothave { background: var(--nothave); border-color: var(--nothave-border); }
+    .dot.pending { background: var(--pending); border-color: var(--pending-border); }
+
+    .note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 24px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Lista de números del 1 al 630</h1>
+    <div class="subtitle">Haz clic en cada número para cambiar su estado: <b>No marcado</b> → <b>La tengo</b> → <b>No la tengo</b>.</div>
+
+    <div class="topbar">
+      <div class="card">
+        Total
+        <strong id="totalCount">630</strong>
+      </div>
+      <div class="card">
+        La tengo
+        <strong id="haveCount">0</strong>
+      </div>
+      <div class="card">
+        No la tengo
+        <strong id="notHaveCount">0</strong>
+      </div>
+      <div class="card">
+        Sin marcar
+        <strong id="pendingCount">630</strong>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Buscar número..." />
+      <select id="filterSelect">
+        <option value="all">Mostrar todos</option>
+        <option value="have">Solo la tengo</option>
+        <option value="nothave">Solo no la tengo</option>
+        <option value="pending">Solo sin marcar</option>
+      </select>
+      <button id="markAllHave">Marcar selección como la tengo</button>
+      <button id="markAllNotHave" class="secondary">Marcar selección como no la tengo</button>
+      <button id="clearAll" class="danger">Reiniciar todo</button>
+    </div>
+
+    <div class="legend">
+      <span><i class="dot pending"></i> Sin marcar</span>
+      <span><i class="dot have"></i> La tengo</span>
+      <span><i class="dot nothave"></i> No la tengo</span>
+    </div>
+
+    <div id="numberGrid" class="grid"></div>
+
+    <div class="note">Los datos se guardan automáticamente en este navegador.</div>
+  </div>
+
+  <script>
+    const TOTAL = 630;
+    const STORAGE_KEY = 'coleccion_1_630_estado';
+    const grid = document.getElementById('numberGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterSelect = document.getElementById('filterSelect');
+
+    const totalCount = document.getElementById('totalCount');
+    const haveCount = document.getElementById('haveCount');
+    const notHaveCount = document.getElementById('notHaveCount');
+    const pendingCount = document.getElementById('pendingCount');
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+      const initial = {};
+      for (let i = 1; i <= TOTAL; i++) initial[i] = 'pending';
+      return initial;
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function nextState(current) {
+      if (current === 'pending') return 'have';
+      if (current === 'have') return 'nothave';
+      return 'pending';
+    }
+
+    function labelFor(status) {
+      if (status === 'have') return 'La tengo';
+      if (status === 'nothave') return 'No la tengo';
+      return 'Sin marcar';
+    }
+
+    function matchesFilter(num, status) {
+      const search = searchInput.value.trim();
+      const filter = filterSelect.value;
+
+      const matchesSearch = !search || String(num).includes(search);
+      const matchesState = filter === 'all' || filter === status;
+
+      return matchesSearch && matchesState;
+    }
+
+    function render() {
+      grid.innerHTML = '';
+      let have = 0, nothave = 0, pending = 0;
+
+      for (let i = 1; i <= TOTAL; i++) {
+        const status = state[i] || 'pending';
+        if (status === 'have') have++;
+        else if (status === 'nothave') nothave++;
+        else pending++;
+
+        if (!matchesFilter(i, status)) continue;
+
+        const item = document.createElement('div');
+        item.className = `item ${status}`;
+        item.innerHTML = `
+          <div class="num">${i}</div>
+          <div class="state">${labelFor(status)}</div>
+        `;
+
+        item.addEventListener('click', () => {
+          state[i] = nextState(status);
+          saveState();
+          render();
+        });
+
+        grid.appendChild(item);
+      }
+
+      totalCount.textContent = TOTAL;
+      haveCount.textContent = have;
+      notHaveCount.textContent = nothave;
+      pendingCount.textContent = pending;
+    }
+
+    searchInput.addEventListener('input', render);
+    filterSelect.addEventListener('change', render);
+
+    document.getElementById('markAllHave').addEventListener('click', () => {
+      for (let i = 1; i <= TOTAL; i++) {
+        const status = state[i] || 'pending';
+        if (matchesFilter(i, status)) state[i] = 'have';
+      }
+      saveState();
+      render();
+    });
+
+    document.getElementById('markAllNotHave').addEventListener('click', () => {
+      for (let i = 1; i <= TOTAL; i++) {
+        const status = state[i] || 'pending';
+        if (matchesFilter(i, status)) state[i] = 'nothave';
+      }
+      saveState();
+      render();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', () => {
+      for (let i = 1; i <= TOTAL; i++) state[i] = 'pending';
+      saveState();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
